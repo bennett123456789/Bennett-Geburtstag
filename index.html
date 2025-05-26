@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Projekt B.E.N.N.E.T.T. – Die Geburtstags-Mission</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    .quiz-container {
+      max-width: 600px;
+      background: #222;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #444;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #44c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <div id="quiz">
+      <h2>Willkommen, Agent Bennett.</h2>
+      <p>Heute ist dein Geburtstag – und du musst 5 Sicherheitsprotokolle lösen, um dein Geschenk zu erhalten. Aber keine Sorge, du hast einen Joker!</p>
+      <button onclick="startQuiz()">Los geht’s</button>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "Was versteht man unter dem Begriff ‚maschinelles Lernen‘?",
+        options: [
+          "Ein Computer baut sich selbst aus Maschinen zusammen",
+          "Ein System lernt automatisch aus Daten, ohne explizit programmiert zu sein",
+          "Maschinen tauschen untereinander Informationen aus, um ein Bewusstsein zu entwickeln"
+        ],
+        correct: 1
+      },
+      {
+        question: "Wer gilt als Erfinder*in von Bitcoin?",
+        options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk"],
+        correct: 1
+      },
+      {
+        question: "Welcher dieser Faktoren ist besonders wichtig, um eine Website für Suchmaschinen gut auffindbar zu machen?",
+        options: [
+          "Die Anzahl der eingebauten Videos",
+          "Die korrekte Verwendung von Meta-Tags, Keywords und strukturierten Inhalten",
+          "Dass die Seite ausschließlich aus JavaScript besteht"
+        ],
+        correct: 1
+      },
+      {
+        question: "Woher stammt ursprünglich die Tradition, Geburtstage zu feiern?",
+        options: [
+          "Aus dem antiken Griechenland, zu Ehren von Göttern und später Menschen",
+          "Von den Römern, um neue Steuerjahre einzuleiten",
+          "Aus dem Mittelalter, um Dämonen fernzuhalten"
+        ],
+        correct: 0
+      },
+      {
+        question: "Was bedeutet der Name ‚Bennett‘?",
+        options: [
+          "Der Erleuchtete",
+          "Der Gesegnete",
+          "Der Hüter der Wahrheit"
+        ],
+        correct: 1
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let jokerUsed = false;
+
+    function startQuiz() {
+      document.getElementById('quiz').innerHTML = '';
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      const container = document.getElementById('quiz');
+      container.innerHTML = `<h3>Frage ${currentQuestion + 1}</h3><p>${q.question}</p>`;
+
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => handleAnswer(index);
+        container.appendChild(btn);
+      });
+
+      if (!jokerUsed) {
+        const jokerBtn = document.createElement('button');
+        jokerBtn.textContent = "Joker einsetzen";
+        jokerBtn.style.background = "#c44";
+        jokerBtn.onclick = () => {
+          jokerUsed = true;
+          nextQuestion();
+        };
+        container.appendChild(jokerBtn);
+      }
+    }
+
+    function handleAnswer(index) {
+      if (index === questions[currentQuestion].correct) {
+        score++;
+      }
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      const container = document.getElementById('quiz');
+      container.innerHTML = `<h2>Mission abgeschlossen</h2>`;
+
+      let message = '';
+      if (score === questions.length || (score === questions.length - 1 && jokerUsed)) {
+        message = `<p>Du hast alle Protokolle gemeistert. Zugriff zur Schatzkammer gewährt!</p>`;
+      } else {
+        message = `
+          <p>Du hast ${score} von ${questions.length} Fragen richtig beantwortet.</p>
+          <p>Auch wenn nicht alles perfekt war: heute ist dein Geburtstag. Und weil deine Geschwister dich mega lieb haben...</p>
+          <h3>...drücken wir ein Auge zu!</h3>
+          <p>Du darfst in die Schatzkammer.</p>
+        `;
+      }
+
+      container.innerHTML += message;
+      container.innerHTML += `<button onclick="showGift()">Geschenk öffnen</button>`;
+    }
+
+    function showGift() {
+      const container = document.getElementById('quiz');
+      container.innerHTML = `
+        <h2>*** Schatzkammer geöffnet ***</h2>
+        <p>Hier ist dein Geschenk, Agent Bennett:</p>
+        <a href="DEIN_GUTSCHEIN_LINK" target="_blank"><button>Zum Gutschein</button></a>
+        <p>Happy Birthday!</p>
+      `;
+    }
+  </script>
+</body>
+</html>
