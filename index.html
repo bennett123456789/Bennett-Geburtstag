@@ -2,169 +2,281 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Projekt B.E.N.N.E.T.T. – Die Geburtstags-Mission</title>
+  <title>Projekt B.E.N.N.E.T.T. – Agentenmission</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #111;
-      color: #eee;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
+      margin: 0;
+      font-family: 'Courier New', Courier, monospace;
+      background: #000;
+      color: #0f0;
+      overflow-x: hidden;
     }
+
+    .matrix-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      z-index: -1;
+      overflow: hidden;
+    }
+
     .quiz-container {
-      max-width: 600px;
-      background: #222;
+      max-width: 800px;
+      margin: auto;
       padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 20px #444;
+      background: rgba(0,0,0,0.85);
+      border: 1px solid #0f0;
+      border-radius: 8px;
+      box-shadow: 0 0 15px #0f0;
+      margin-top: 3rem;
     }
+
     button {
-      margin-top: 1rem;
-      padding: 0.5rem 1rem;
-      background: #44c;
-      color: white;
+      display: block;
+      margin: 1rem auto;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      background: #0f0;
+      color: #000;
       border: none;
-      border-radius: 5px;
+      border-radius: 4px;
       cursor: pointer;
     }
-    .hidden { display: none; }
+
+    .option-button {
+      background: transparent;
+      color: #0f0;
+      border: 1px solid #0f0;
+      margin: 0.5rem 0;
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem;
+    }
+
+    .status-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .status-bar div {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #0f0;
+      border-radius: 50%;
+    }
+
+    .status-correct { background: limegreen; }
+    .status-wrong { background: crimson; }
+
+    #fireworks {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
   </style>
 </head>
 <body>
 
-  <div class="quiz-container">
-    <div id="quiz">
-      <h2>Willkommen, Agent Bennett.</h2>
-      <p>Heute ist dein Geburtstag – und du musst 5 Sicherheitsprotokolle lösen, um dein Geschenk zu erhalten. Aber keine Sorge, du hast einen Joker!</p>
-      <button onclick="startQuiz()">Los geht’s</button>
-    </div>
-  </div>
+<canvas id="fireworks" class="hidden"></canvas>
+<div class="matrix-bg"></div>
 
-  <script>
-    const questions = [
-      {
-        question: "Was versteht man unter dem Begriff ‚maschinelles Lernen‘?",
-        options: [
-          "Ein Computer baut sich selbst aus Maschinen zusammen",
-          "Ein System lernt automatisch aus Daten, ohne explizit programmiert zu sein",
-          "Maschinen tauschen untereinander Informationen aus, um ein Bewusstsein zu entwickeln"
-        ],
-        correct: 1
-      },
-      {
-        question: "Wer gilt als Erfinder*in von Bitcoin?",
-        options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk"],
-        correct: 1
-      },
-      {
-        question: "Welcher dieser Faktoren ist besonders wichtig, um eine Website für Suchmaschinen gut auffindbar zu machen?",
-        options: [
-          "Die Anzahl der eingebauten Videos",
-          "Die korrekte Verwendung von Meta-Tags, Keywords und strukturierten Inhalten",
-          "Dass die Seite ausschließlich aus JavaScript besteht"
-        ],
-        correct: 1
-      },
-      {
-        question: "Woher stammt ursprünglich die Tradition, Geburtstage zu feiern?",
-        options: [
-          "Aus dem antiken Griechenland, zu Ehren von Göttern und später Menschen",
-          "Von den Römern, um neue Steuerjahre einzuleiten",
-          "Aus dem Mittelalter, um Dämonen fernzuhalten"
-        ],
-        correct: 0
-      },
-      {
-        question: "Was bedeutet der Name ‚Bennett‘?",
-        options: [
-          "Der Erleuchtete",
-          "Der Gesegnete",
-          "Der Hüter der Wahrheit"
-        ],
-        correct: 1
-      }
-    ];
+<div class="quiz-container" id="quiz">
+  <h2>Willkommen, Agent Bennett</h2>
+  <p>Du musst 6 Sicherheitsprotokolle durchlaufen, um Zugriff auf deine Belohnung zu erhalten. Jede Antwort bringt dich dem Ziel näher.</p>
+  <button onclick="startQuiz()">Mission starten</button>
+</div>
 
-    let currentQuestion = 0;
-    let score = 0;
-    let jokerUsed = false;
-
-    function startQuiz() {
-      document.getElementById('quiz').innerHTML = '';
-      showQuestion();
+<script>
+  const questions = [
+    {
+      question: "Was versteht man unter dem Begriff ‚maschinelles Lernen‘?",
+      options: [
+        "Ein Computer baut sich selbst aus Maschinen zusammen",
+        "Ein System lernt automatisch aus Daten, ohne explizit programmiert zu sein",
+        "Maschinen tauschen untereinander Informationen aus, um ein Bewusstsein zu entwickeln"
+      ],
+      correct: 1
+    },
+    {
+      question: "Wer gilt als Erfinder*in von Bitcoin?",
+      options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk"],
+      correct: 1
+    },
+    {
+      question: "Welcher dieser Faktoren ist besonders wichtig für gutes SEO?",
+      options: [
+        "Die Anzahl der eingebauten Videos",
+        "Die korrekte Verwendung von Meta-Tags, Keywords und strukturierten Inhalten",
+        "Dass die Seite ausschließlich aus JavaScript besteht"
+      ],
+      correct: 1
+    },
+    {
+      question: "Woher stammt ursprünglich die Tradition, Geburtstage zu feiern?",
+      options: [
+        "Aus dem antiken Griechenland, zu Ehren von Göttern und später Menschen",
+        "Von den Römern, um neue Steuerjahre einzuleiten",
+        "Aus dem Mittelalter, um Dämonen fernzuhalten"
+      ],
+      correct: 0
+    },
+    {
+      question: "Was bedeutet der Name ‚Bennett‘?",
+      options: [
+        "Der Erleuchtete",
+        "Der Gesegnete",
+        "Der Hüter der Wahrheit"
+      ],
+      correct: 1
+    },
+    {
+      question: "Was geschah 1990, das später das Internet revolutionierte?",
+      options: [
+        "Der erste Bitcoin wurde geschürft",
+        "Tim Berners-Lee schlägt das World Wide Web vor",
+        "Google wurde gegründet"
+      ],
+      correct: 1
     }
+  ];
 
-    function showQuestion() {
-      const q = questions[currentQuestion];
-      const container = document.getElementById('quiz');
-      container.innerHTML = `<h3>Frage ${currentQuestion + 1}</h3><p>${q.question}</p>`;
+  let current = 0;
+  let score = 0;
+  let results = [];
 
-      q.options.forEach((opt, index) => {
-        const btn = document.createElement('button');
-        btn.textContent = opt;
-        btn.onclick = () => handleAnswer(index);
-        container.appendChild(btn);
-      });
+  function startQuiz() {
+    current = 0;
+    score = 0;
+    results = [];
+    document.getElementById('quiz').innerHTML = '';
+    showQuestion();
+  }
 
-      if (!jokerUsed) {
-        const jokerBtn = document.createElement('button');
-        jokerBtn.textContent = "Joker einsetzen";
-        jokerBtn.style.background = "#c44";
-        jokerBtn.onclick = () => {
-          jokerUsed = true;
-          nextQuestion();
-        };
-        container.appendChild(jokerBtn);
-      }
-    }
+  function showQuestion() {
+    const q = questions[current];
+    const container = document.getElementById('quiz');
+    container.innerHTML = `<h3>Protokoll ${current + 1}</h3><p>${q.question}</p>`;
 
-    function handleAnswer(index) {
-      if (index === questions[currentQuestion].correct) {
-        score++;
-      }
-      nextQuestion();
-    }
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-button';
+      btn.textContent = opt;
+      btn.onclick = () => handleAnswer(i);
+      container.appendChild(btn);
+    });
 
-    function nextQuestion() {
-      currentQuestion++;
-      if (currentQuestion < questions.length) {
+    const statusBar = document.createElement('div');
+    statusBar.className = 'status-bar';
+    results.forEach(r => {
+      const dot = document.createElement('div');
+      dot.className = r ? 'status-correct' : 'status-wrong';
+      statusBar.appendChild(dot);
+    });
+    container.appendChild(statusBar);
+  }
+
+  function handleAnswer(index) {
+    const correct = questions[current].correct;
+    const container = document.getElementById('quiz');
+
+    let isCorrect = index === correct;
+    results.push(isCorrect);
+    if (isCorrect) score++;
+
+    const msg = document.createElement('p');
+    msg.innerHTML = isCorrect ? 
+      "<strong>Mission erfolgreich. Zugriff gewährt.</strong>" :
+      "<strong>Zugriff verweigert. Mission fehlgeschlagen.</strong>";
+    container.appendChild(msg);
+
+    setTimeout(() => {
+      current++;
+      if (current < questions.length) {
         showQuestion();
       } else {
         showResult();
       }
+    }, 1500);
+  }
+
+  function showResult() {
+    const container = document.getElementById('quiz');
+    container.innerHTML = `<h2>Mission abgeschlossen</h2>`;
+    container.innerHTML += `<p>Du hast ${score} von ${questions.length} Protokollen entschlüsselt.</p>`;
+
+    container.innerHTML += `
+      <p>Auch wenn nicht alles perfekt war: Heute ist dein Geburtstag. Und weil deine Geschwister dich superlieb haben...</p>
+      <h3>...drücken wir ein Auge zu!</h3>
+      <p>Du darfst in die Schatzkammer, Agent Bennett.</p>
+      <button onclick="showGift()">Schatzkammer öffnen</button>
+    `;
+
+    launchFireworks();
+  }
+
+  function showGift() {
+    const container = document.getElementById('quiz');
+    container.innerHTML = `
+      <h2>*** Schatzkammer geöffnet ***</h2>
+      <p>Hier ist dein Geschenk, Agent Bennett:</p>
+      <a href="Tickets%20-%20Mit%20der%20Whiskybahn%20durch%20Down%20Under%20-%20Starward%20Whiskys%20-%202025-05-31.pdf" target="_blank">
+        <button>Zum PDF-Geschenk</button>
+      </a>
+      <p>Happy Birthday!</p>
+    `;
+  }
+
+  function launchFireworks() {
+    const canvas = document.getElementById('fireworks');
+    canvas.classList.remove('hidden');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function createParticle() {
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height,
+        radius: Math.random() * 2 + 1,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        vx: (Math.random() - 0.5) * 4,
+        vy: -Math.random() * 10 - 5,
+        life: 100
+      };
     }
 
-    function showResult() {
-      const container = document.getElementById('quiz');
-      container.innerHTML = `<h2>Mission abgeschlossen</h2>`;
+    for (let i = 0; i < 100; i++) {
+      particles.push(createParticle());
+    }
 
-      let message = '';
-      if (score === questions.length || (score === questions.length - 1 && jokerUsed)) {
-        message = `<p>Du hast alle Protokolle gemeistert. Zugriff zur Schatzkammer gewährt!</p>`;
-      } else {
-        message = `
-          <p>Du hast ${score} von ${questions.length} Fragen richtig beantwortet.</p>
-          <p>Auch wenn nicht alles perfekt war: heute ist dein Geburtstag. Und weil deine Geschwister dich mega lieb haben...</p>
-          <h3>...drücken wir ein Auge zu!</h3>
-          <p>Du darfst in die Schatzkammer.</p>
-        `;
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.1;
+        p.life--;
+      });
+      particles = particles.filter(p => p.life > 0);
+      if (particles.length > 0) {
+        requestAnimationFrame(animate);
       }
-
-      container.innerHTML += message;
-      container.innerHTML += `<button onclick="showGift()">Geschenk öffnen</button>`;
     }
 
-    function showGift() {
-      const container = document.getElementById('quiz');
-      container.innerHTML = `
-        <h2>*** Schatzkammer geöffnet ***</h2>
-        <p>Hier ist dein Geschenk, Agent Bennett:</p>
-        <a href="DEIN_GUTSCHEIN_LINK" target="_blank"><button>Zum Gutschein</button></a>
-        <p>Happy Birthday!</p>
-      `;
-    }
-  </script>
+    animate();
+  }
+</script>
+
 </body>
 </html>
+
