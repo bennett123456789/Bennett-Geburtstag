@@ -159,7 +159,7 @@
   function showQuestion() {
     const q = questions[current];
     const container = document.getElementById('quiz');
-    container.innerHTML = `<h3>Protokoll ${current + 1}</h3><p>${q.question}</p>`;
+    container.innerHTML = <h3>Protokoll ${current + 1}</h3><p>${q.question}</p>;
 
     q.options.forEach((opt, i) => {
       const btn = document.createElement('button');
@@ -205,8 +205,8 @@
 
   function showResult() {
     const container = document.getElementById('quiz');
-    container.innerHTML = `<h2>Mission abgeschlossen</h2>`;
-    container.innerHTML += `<p>Du hast ${score} von ${questions.length} Protokollen entschlüsselt.</p>`;
+    container.innerHTML = <h2>Mission abgeschlossen</h2>;
+    container.innerHTML += <p>Du hast ${score} von ${questions.length} Protokollen entschlüsselt.</p>;
 
     container.innerHTML += `
       <p>Auch wenn nicht alles perfekt war: Heute ist dein Geburtstag. Und weil deine Geschwister dich superlieb haben...</p>
@@ -223,13 +223,12 @@
     container.innerHTML = `
       <h2>*** Schatzkammer geöffnet ***</h2>
       <p>Hier ist dein Geschenk, Agent Bennett:</p>
-      <a href="Tickets%20-%20Mit%20der%20Whiskybahn%20durch%20Down%20Under%20-%20Starward%20Whiskys%20-%202025-05-31.pdf" target="_blank">
-        <button>Zum PDF-Geschenk</button>
-      </a>
+      <a href="DEIN_GUTSCHEIN_LINK" target="_blank"><button>Zum Gutschein</button></a>
       <p>Happy Birthday!</p>
     `;
   }
 
+  // Simple Feuerwerk
   function launchFireworks() {
     const canvas = document.getElementById('fireworks');
     canvas.classList.remove('hidden');
@@ -244,7 +243,7 @@
         x: Math.random() * canvas.width,
         y: canvas.height,
         radius: Math.random() * 2 + 1,
-        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        color: hsl(${Math.random() * 360}, 100%, 50%),
         vx: (Math.random() - 0.5) * 4,
         vy: -Math.random() * 10 - 5,
         life: 100
@@ -279,4 +278,3 @@
 
 </body>
 </html>
-
